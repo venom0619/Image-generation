@@ -127,8 +127,8 @@ transform = transforms.Compose([
 ])
 
 
-dataset = CustomDataset(root_image_dir='D:/asu/sem 1/fpga/project/image_cars',
-                        root_text_dir='D:/asu/sem 1/fpga/project/names_cars',
+dataset = CustomDataset(root_image_dir='path',
+                        root_text_dir='path',
                         transform=transform)
 dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=0)
 
