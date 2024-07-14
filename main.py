@@ -9,7 +9,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import spacy
 
-# Set random seed for reproducibility
 torch.manual_seed(42)
 np.random.seed(42)
 
@@ -37,12 +36,11 @@ class ConditionalGenerator(nn.Module):
 
     def forward(self, noise, text_embedding):
         text_embedding = self.label_embedding(text_embedding)
-        # Reshape text embedding to match the noise tensor dimensions
-        text_embedding = text_embedding.unsqueeze(-1).unsqueeze(-1)  # Change shape from [batch_size, nz] to [batch_size, nz, 1, 1]
+        text_embedding = text_embedding.unsqueeze(-1).unsqueeze(-1) 
         combined_input = torch.cat((noise, text_embedding), 1)
         return self.main(combined_input)
 
-# Discriminator network
+
 class Discriminator(nn.Module):
     def __init__(self, nc, ndf):
         super(Discriminator, self).__init__()
@@ -65,7 +63,7 @@ class Discriminator(nn.Module):
     def forward(self, input):
         return self.main(input)
 
-# Custom dataset class for images and descriptions
+
 class CustomDataset(Dataset):
     def __init__(self, root_image_dir, root_text_dir, transform=None):
         self.root_image_dir = root_image_dir
@@ -89,10 +87,10 @@ class CustomDataset(Dataset):
 
         return image, description
 
-# Load the spaCy English model for text processing
+
 nlp = spacy.load("en_core_web_md")
 
-# Function to encode a sentence into a vector
+
 def encode_sentence(sentence):
     with torch.no_grad():
         tokenized = nlp(sentence)
@@ -116,7 +114,7 @@ nz = 128
 ngf = 64
 ndf = 64
 num_epochs = 300
-text_embedding_dim = nz  # Adjust based on your embedding size
+text_embedding_dim = nz  
 
 
 transform = transforms.Compose([
@@ -171,7 +169,6 @@ for epoch in range(num_epochs):
         encoded_texts = [encode_sentence(description).to(device) for description in descriptions]
         encoded_texts = torch.stack(encoded_texts)
 
-        # Discriminator update
         netD.zero_grad()
         label = torch.full((b_size,), 1, dtype=torch.float, device=device)
         output = netD(real_images).view(-1)
@@ -187,7 +184,6 @@ for epoch in range(num_epochs):
         errD = errD_real + errD_fake
         optimizerD.step()
 
-        # Generator update
         netG.zero_grad()
         label.fill_(1)
         output = netD(fake_images).view(-1)
@@ -202,16 +198,16 @@ for epoch in range(num_epochs):
                 
         G_losses.append(errG.item())
         D_losses.append(errD.item())
-# Function to generate and display image from description
+
 def generate_image_from_description(description):
     netG.eval()
     description_vector = encode_sentence(description).to(device)
     noise = torch.randn(1, nz, 1, 1, device=device)
     with torch.no_grad():
         fake_image = netG(noise, description_vector.unsqueeze(0)).squeeze(0).cpu()
-    # Transpose the image tensor from (channels, height, width) to (height, width, channels)
+    
     fake_image = np.transpose(fake_image.numpy(), (1, 2, 0))
-    # Normalize and plot the image
+    
     plt.imshow((fake_image + 1) / 2)  # Normalize the image to [0, 1] for proper visualization
     plt.axis('off')
     plt.show()
