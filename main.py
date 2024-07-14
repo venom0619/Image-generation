@@ -208,7 +208,7 @@ def generate_image_from_description(description):
     
     fake_image = np.transpose(fake_image.numpy(), (1, 2, 0))
     
-    plt.imshow((fake_image + 1) / 2)  # Normalize the image to [0, 1] for proper visualization
+    plt.imshow((fake_image + 1) / 2)  
     plt.axis('off')
     plt.show()
 
