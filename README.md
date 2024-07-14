@@ -17,7 +17,6 @@ This project implements a Conditional Generative Adversarial Network (GAN) that 
 1. Clone the repository:
     ```bash
     git clone https://github.com/your-username/conditional-gan-text2image.git
-    cd conditional-gan-text2image
     ```
 
 2. Install the required libraries:
